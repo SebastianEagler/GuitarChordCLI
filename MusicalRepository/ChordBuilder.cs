@@ -1,8 +1,6 @@
-﻿using GuitarChordCLI.MusicalRepository;
-
-namespace GuitarChordCLI.Generators
+﻿namespace GuitarChordCLI.MusicalRepository
 {
-    internal class ChordGenerator
+    internal class ChordBuilder
     {
 
         private static int GetRootIndex(MusicNotes rootNote)

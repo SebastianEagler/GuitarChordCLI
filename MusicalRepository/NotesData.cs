@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GuitarChordCLI.MusicalRepository
 {
     internal enum MusicNotes {
-        C, C_sharp, D, D_sharp, Em, F, F_sharp, G, G_sharp, A, A_sharp, B  }
+        C, C_sharp, D, D_sharp, E, F, F_sharp, G, G_sharp, A, A_sharp, B  }
 
     internal static class NotesData
     {

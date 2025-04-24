@@ -1,12 +1,12 @@
 ﻿using System.Runtime.InteropServices;
 
 
-namespace GuitarChordCLI.Setup
+namespace GuitarChordCLI
 {
     internal class ConsoleSetup
     {
-        private static readonly short _fontSize = 24;
-        private static readonly int _width = 120;
+        private static readonly short _fontSize = 16;
+        private static readonly int _width = 180;
         private static readonly int _height = 40;
         private static readonly string _fontName = "Consolas";
 
