@@ -27,6 +27,18 @@ namespace GuitarChordCLI.Generators
             {
                 _cliTable.AddStringRow(Freadboard.Notes.ElementAt(i).Value.Select(n => n.ToString()).ToList() );
             }
+            _cliTable.Column[0].Color = ConsoleColor.Red;
+            _cliTable.Column[3].Color = ConsoleColor.Yellow;
+            _cliTable.Column[5].Color = ConsoleColor.Red;
+            _cliTable.Column[7].Color = ConsoleColor.Yellow;
+            _cliTable.Column[9].Color = ConsoleColor.Yellow;
+            _cliTable.Column[12].Color = ConsoleColor.Red;
+                        
+            _cliTable.Column[15].Color = ConsoleColor.Yellow;
+            _cliTable.Column[17].Color = ConsoleColor.Red;
+            _cliTable.Column[19].Color = ConsoleColor.Yellow;
+            _cliTable.Column[21].Color = ConsoleColor.Yellow;
+            _cliTable.Column[24].Color = ConsoleColor.Red;
         }
         public CliTable Build()
         {

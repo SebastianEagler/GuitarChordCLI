@@ -14,7 +14,7 @@ namespace GuitarChordCLI
             ConsoleSetup.ChangeFont();
             ChordBuilder chord = new ChordBuilder();
 
-            var CellColor = new CellColorOptions { Color = ConsoleColor.Red };
+            var CellColor = new CellColorOptions { Color = ConsoleColor.White };
             var CellColorforScale = new CellColorOptions { Color = ConsoleColor.Green };
 
             var fret0 = new FreadboardBuilder().Build();
@@ -34,8 +34,8 @@ namespace GuitarChordCLI
             Console.WriteLine("");
 
             var fret2 = new FreadboardBuilder().Build();
-            var cm2 = chord.GetSeventhChord(MusicNotes.C, ChordSeventhTonal.Major);
-            fret2.ColorCells(ScalesDefinition.MajorScales[NotesData.C].ToList(), CellColorforScale);
+            var cm2 = chord.GetSeventhChord(MusicNotes.G, ChordSeventhTonal.Major);
+            fret2.ColorCells(ScalesDefinition.MajorScales[NotesData.G].ToList(), CellColorforScale);
             fret2.ColorCells(cm2.Notes, CellColor);
             Console.WriteLine(cm2.Name);
             fret2.Print();
