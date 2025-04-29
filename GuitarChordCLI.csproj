@@ -10,4 +10,14 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="CLITextTable\**" />
+    <EmbeddedResource Remove="CLITextTable\**" />
+    <None Remove="CLITextTable\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="CLITextTable\CLITextTable.csproj" />
+  </ItemGroup>
+
 </Project>

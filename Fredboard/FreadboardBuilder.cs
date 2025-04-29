@@ -1,10 +1,6 @@
-﻿using GuitarChordCLI.MusicalRepository;
-using GuitarChordCLI.Table;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using GuitarChordCLI.MusicalRepository;
+using CLITextTable.CliTable;
 
 namespace GuitarChordCLI.Generators
 {
@@ -13,29 +9,28 @@ namespace GuitarChordCLI.Generators
         private readonly CliTable _cliTable;
         public FreadboardBuilder()
         {
-            var x = Enumerable.Range(0, Freadboard.Count + 1).Select(n => n.ToString());
+            var header = Enumerable.Range(0, Freadboard.Count + 1).Select(n => n.ToString());
+
             _cliTable = new CliTable(options =>
             {
-                options.MinRowWidth = 2;
-                options.LeftRowMargin = 1;
-                options.RightRowMargin = 2;
+                options.MinCellDataWidth = 2;
+                options.RowSeparatorMarginLeft = 1; 
+                options.RowSeparatorMarginRight = 2;
                 options.DrawHeaderLine = false;
                 options.DrawRowLines = false;
-            }, x.ToArray());
+                options.DefaultRowColor = ConsoleColor.DarkGray;
+                options.DefaultHeaderColor = ConsoleColor.DarkCyan;
 
-            for (int i = Freadboard.Frets.Count - 1; i >= 0; i--)
+            }, header.ToArray());
+
+            for (int i = 0; i < Freadboard.Frets.Count ; i++)
             {
-                _cliTable.AddRow(Freadboard.Notes.ElementAt(i).Value.Select(n => n.ToString()).ToList());
+                _cliTable.AddStringRow(Freadboard.Notes.ElementAt(i).Value.Select(n => n.ToString()).ToList() );
             }
         }
-        public void Print()
+        public CliTable Build()
         {
-            _cliTable.Print();
-        }
-
-        public FreadboardBuilder AddNotes(List<string> notes)
-        {
-            return this;
+          return _cliTable;
         }
     }
 }

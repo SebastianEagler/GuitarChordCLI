@@ -5,9 +5,9 @@ namespace GuitarChordCLI
 {
     internal class ConsoleSetup
     {
-        private static readonly short _fontSize = 16;
-        private static readonly int _width = 180;
-        private static readonly int _height = 40;
+        private static readonly short _fontSize = 24;
+        private static readonly int _width = 155;
+        private static readonly int _height = 35;
         private static readonly string _fontName = "Consolas";
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
