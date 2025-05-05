@@ -14,5 +14,6 @@ Skompulować  na przykłąd w Visual Studio 2022
 - **Klawisz M** – przełączanie między tonacją durową a molową
 - **Klawisz S** – wyświetlanie lub ukrywanie skali na gryfie
 
-
+## ToDo
+Obsługa akordów 7,9, itd.
 
