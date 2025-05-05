@@ -42,7 +42,7 @@ namespace GuitarChordCLI
             fontInfo.cbSize = (uint)Marshal.SizeOf(fontInfo);
             fontInfo.dwFontSize.Y = _fontSize; // Zmiana rozmiaru czcionki
             fontInfo.FaceName = _fontName;
-            SetCurrentConsoleFontEx(hnd, false, ref fontInfo);                        
+            SetCurrentConsoleFontEx(hnd, false, ref fontInfo);
         }
 
         public static void SetWindowSize()
@@ -52,5 +52,8 @@ namespace GuitarChordCLI
             Console.SetWindowSize(width, height);
         }
 
+        public static void SetUtf8(){
+         Console.OutputEncoding = System.Text.Encoding.UTF8;
+        }
     }
 }

@@ -9,8 +9,10 @@ namespace GuitarChordCLI.Generators
         private readonly CliTable _cliTable;
         public FreadboardBuilder()
         {
+            // Freadboard is a static class that contains the fretboard data
             var header = Enumerable.Range(0, Freadboard.Count + 1).Select(n => n.ToString());
 
+            // Create a new CLI table with the specified options
             _cliTable = new CliTable(options =>
             {
                 options.MinCellDataWidth = 2;
@@ -23,22 +25,26 @@ namespace GuitarChordCLI.Generators
 
             }, header.ToArray());
 
+            // Add the fretboard data to the table
             for (int i = 0; i < Freadboard.Frets.Count ; i++)
             {
                 _cliTable.AddStringRow(Freadboard.Notes.ElementAt(i).Value.Select(n => n.ToString()).ToList() );
             }
+
+            // Set the colors for the frets
             _cliTable.Column[0].Color = ConsoleColor.Red;
             _cliTable.Column[3].Color = ConsoleColor.Yellow;
             _cliTable.Column[5].Color = ConsoleColor.Red;
             _cliTable.Column[7].Color = ConsoleColor.Yellow;
             _cliTable.Column[9].Color = ConsoleColor.Yellow;
             _cliTable.Column[12].Color = ConsoleColor.Red;
-                        
+            //            
             _cliTable.Column[15].Color = ConsoleColor.Yellow;
             _cliTable.Column[17].Color = ConsoleColor.Red;
             _cliTable.Column[19].Color = ConsoleColor.Yellow;
             _cliTable.Column[21].Color = ConsoleColor.Yellow;
             _cliTable.Column[24].Color = ConsoleColor.Red;
+
         }
         public CliTable Build()
         {

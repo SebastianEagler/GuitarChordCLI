@@ -38,5 +38,41 @@ namespace GuitarChordCLI.MusicalRepository
         public static readonly string A_sharp = "A#";
         public static readonly string B = "B";
 
+        private static readonly Dictionary<string, MusicNotes> _noteMapping = new Dictionary<string, MusicNotes>
+            {
+                {C, MusicNotes.C},
+                {C_sharp, MusicNotes.C_sharp},
+                {D, MusicNotes.D},
+                {D_sharp, MusicNotes.D_sharp},
+                {E, MusicNotes.E},
+                {F, MusicNotes.F},
+                {F_sharp, MusicNotes.F_sharp},
+                {G, MusicNotes.G},
+                {G_sharp, MusicNotes.G_sharp},
+                {A, MusicNotes.A},
+                {A_sharp, MusicNotes.A_sharp},
+                {B, MusicNotes.B}
+            };
+
+        public static MusicNotes? Get(string note)
+        {
+            if (_noteMapping.TryGetValue(note, out var musicNote))
+            {
+                return musicNote;
+            }
+            return null;
+        }
+
+        public static string Get(MusicNotes note)
+        {
+            foreach (var kvp in _noteMapping)
+            {
+                if (kvp.Value == note)
+                {
+                    return kvp.Key;
+                }
+            }
+            return C;
+        }
     }
 }
