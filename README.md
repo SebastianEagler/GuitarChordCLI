@@ -7,7 +7,7 @@ Aplikacja wyświetla gryf sześciostrunowej gitary i zaznacza na nim nuty akord�
 - **GuitarChordCLI** – aplikacja konsolowa.
 
 ## Instalacja
-Skompulować  na przykład w Visual Studio 2022
+Skompilować w Visual Studio 2022
 
 ## Jak używać
 - **Strzałki ← / →** – wybór „Root” (dźwięku podstawowego)
