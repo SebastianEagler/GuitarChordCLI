@@ -1,4 +1,4 @@
-﻿namespace GuitarChordCLI.MusicalRepository
+namespace GuitarChordCLI.MusicalRepository
 {
     public class ChordNote
     {
@@ -6,9 +6,9 @@
         public string Name { get; set; } = String.Empty;  
 
     }
-    internal class ChordBuilder
-    {
 
+    public class ChordBuilder
+    {
         private static int GetRootIndex(MusicNotes rootNote)
         {
             int rootIndex = (int)rootNote;
@@ -18,129 +18,56 @@
             }
             return rootIndex;
         }
-        public ChordNote GetTriads(MusicNotes rootNote, ChordTonal chordTonal, ChordInversion chordInversion = ChordInversion.Root)
+
+        /// <summary>
+        /// Builds chord notes from semitone intervals above the root.
+        /// Inversion n moves the first n notes to the end (bass = n-th chord tone).
+        /// </summary>
+        private static ChordNote Build(MusicNotes rootNote, string name, int[] intervals, int inversion)
         {
-            var chord = GetChord(rootNote, chordTonal, chordInversion);                        
-            return chord;
+            int rootIndex = GetRootIndex(rootNote);
+            var notes = NotesData.Notes;
+
+            var chordNotes = intervals
+                .Select(i => notes[(rootIndex + i) % notes.Count])
+                .ToList();
+
+            int shift = inversion % chordNotes.Count;
+            var ordered = chordNotes.Skip(shift).Concat(chordNotes.Take(shift)).ToList();
+
+            return new ChordNote
+            {
+                Name = inversion == 0 ? name : $"{name} (inversion {inversion})",
+                Notes = ordered
+            };
         }
 
         public ChordNote GetChord(MusicNotes rootNote, ChordTonal chordTonal, ChordInversion chordInversion = ChordInversion.Root)
-        {            
-            var chord = new ChordNote();
-            chord.Name = $"{rootNote} {chordTonal} {chordInversion}";
-            var notes = NotesData.Notes;
-            int rootIndex = GetRootIndex(rootNote);
-            int thirdInterval = chordTonal == ChordTonal.Major ? 4 : 3;
-            int fifthInterval = 7;
-
-            switch (chordInversion)
-            {
-                case ChordInversion.First:
-                    chord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    chord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    chord.Notes.Add(notes[rootIndex]);
-                    break;
-
-                case ChordInversion.Second:
-                    chord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    chord.Notes.Add(notes[rootIndex]);
-                    chord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    break;
-
-                default:
-                    chord.Notes.Add(notes[rootIndex]);
-                    chord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    chord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    break;
-            }
-
-            return chord;
+        {
+            int[] intervals = chordTonal == ChordTonal.Major ? [0, 4, 7] : [0, 3, 7];
+            return Build(rootNote, $"{NotesData.Get(rootNote)} {chordTonal}", intervals, (int)chordInversion);
         }
-                
+
         public ChordNote GetSeventhChord(MusicNotes rootNote, ChordSeventhTonal chordTonal, ChordSeventhInversion chordInversion = ChordSeventhInversion.Root)
         {
-            var seventhChord = new ChordNote();
-            seventhChord.Name = $" {rootNote} {chordTonal} 7 {chordInversion}";
-            var notes = NotesData.Notes;
-            int rootIndex = GetRootIndex(rootNote); 
-
-            // Wybór interwałów w zależności od rodzaju akordu
-            int thirdInterval = chordTonal == ChordSeventhTonal.Major || chordTonal == ChordSeventhTonal.Dominant ? 4 : 3;
-            int fifthInterval = 7;
-            int seventhInterval = chordTonal == ChordSeventhTonal.Major ? 11 : 10; // Major 7 ma septymę wielką, reszta małą
-
-            switch (chordInversion)
+            int[] intervals = chordTonal switch
             {
-                case ChordSeventhInversion.First:
-                    seventhChord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]); // Tercja w basie
-                    seventhChord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    seventhChord.Notes.Add(notes[(rootIndex + seventhInterval) % 12]);
-                    seventhChord.Notes.Add(notes[rootIndex]); // Tonika na górze
-                    break;
-
-                case ChordSeventhInversion.Second:
-                    seventhChord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]); // Kwinta w basie
-                    seventhChord.Notes.Add(notes[(rootIndex + seventhInterval) % 12]);
-                    seventhChord.Notes.Add(notes[rootIndex]);
-                    seventhChord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]); // Tercja na górze
-                    break;
-
-                case ChordSeventhInversion.Third:
-                    seventhChord.Notes.Add(notes[(rootIndex + seventhInterval) % 12]); // Septyma w basie
-                    seventhChord.Notes.Add(notes[rootIndex]);
-                    seventhChord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    seventhChord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]); // Kwinta na górze
-                    break;
-
-                default:
-                    seventhChord.Notes.Add(notes[rootIndex]); // Root position
-                    seventhChord.Notes.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    seventhChord.Notes.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    seventhChord.Notes.Add(notes[(rootIndex + seventhInterval) % 12]);
-                    break;
-            }
-
-            return seventhChord;
+                ChordSeventhTonal.Major => [0, 4, 7, 11],
+                ChordSeventhTonal.Minor => [0, 3, 7, 10],
+                _ => [0, 4, 7, 10] // Dominant (and None)
+            };
+            return Build(rootNote, $"{NotesData.Get(rootNote)} {chordTonal} 7", intervals, (int)chordInversion);
         }
-        
-        public List<string> GetExtendedChord(MusicNotes rootNote, ChordExtendedType chordType, ChordInversion chordInversion = ChordInversion.Root)
+
+        public ChordNote GetExtendedChord(MusicNotes rootNote, ChordExtendedType chordType, ChordInversion chordInversion = ChordInversion.Root)
         {
-            var chord = new List<string>();
-            var notes = NotesData.Notes;
-            int rootIndex = GetRootIndex(rootNote); 
-            
-            // Wybór interwałów w zależności od typu akordu
-            int thirdInterval = chordType == ChordExtendedType.Diminished ? 3 :
-                                chordType == ChordExtendedType.Augmented ? 4 : 5;
-
-            int fifthInterval = chordType == ChordExtendedType.Diminished ? 6 :
-                                chordType == ChordExtendedType.Augmented ? 8 : 7;
-
-            switch (chordInversion)
+            int[] intervals = chordType switch
             {
-                case ChordInversion.First:
-                    chord.Add(notes[(rootIndex + thirdInterval) % 12]); // Tercja w basie
-                    chord.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    chord.Add(notes[rootIndex]); // Tonika na górze
-                    break;
-
-                case ChordInversion.Second:
-                    chord.Add(notes[(rootIndex + thirdInterval) % 12]); // Tercja w basie
-                    chord.Add(notes[rootIndex]);
-                    chord.Add(notes[(rootIndex + fifthInterval) % 12]); // Kwinta na górze
-                    break;
-
-                default:
-                    chord.Add(notes[rootIndex]); // Root position
-                    chord.Add(notes[(rootIndex + thirdInterval) % 12]);
-                    chord.Add(notes[(rootIndex + fifthInterval) % 12]);
-                    break;
-            }
-
-            return chord;
+                ChordExtendedType.Diminished => [0, 3, 6],
+                ChordExtendedType.Augmented => [0, 4, 8],
+                _ => [0, 5, 7] // Suspended (sus4)
+            };
+            return Build(rootNote, $"{NotesData.Get(rootNote)} {chordType}", intervals, (int)chordInversion);
         }
-
-
-
     }
 }

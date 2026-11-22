@@ -11,13 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CLITextTable\**" />
-    <EmbeddedResource Remove="CLITextTable\**" />
-    <None Remove="CLITextTable\**" />
+    <Compile Remove="GuitarChordCLI.Tests\**" />
+    <EmbeddedResource Remove="GuitarChordCLI.Tests\**" />
+    <None Remove="GuitarChordCLI.Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="CLITextTable\CLITextTable.csproj" />
+    <ProjectReference Include="..\CLITextTable\src\CLITextTable\CLITextTable.csproj" />
   </ItemGroup>
 
 </Project>

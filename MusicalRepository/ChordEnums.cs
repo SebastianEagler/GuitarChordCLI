@@ -1,23 +1,23 @@
-﻿namespace GuitarChordCLI.MusicalRepository
+namespace GuitarChordCLI.MusicalRepository
 {
-    internal enum ChordTonal
+    public enum ChordTonal
     {
         Major, Minor
     }
-    internal enum ChordSeventhTonal
+    public enum ChordSeventhTonal
     {
         None,
         Major,
         Minor,
         Dominant,
     }
-    internal enum ChordInversion
+    public enum ChordInversion
     {
         Root,
         First,
         Second,
     }
-    internal enum ChordSeventhInversion
+    public enum ChordSeventhInversion
     {
         Root,
         First,
