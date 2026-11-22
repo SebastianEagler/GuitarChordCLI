@@ -12,13 +12,16 @@ Konsolowa aplikacja .NET 9 (Windows) rysująca gryf 6-strunowej gitary (24 progi
   - `NotesData`: enum `MusicNotes` (C..B, sharpy: `C_sharp`), lista nut `"C","C#",...`, mapowanie string<->enum.
   - `ChordBuilder`: jedna prywatna `Build(root, name, intervals, inversion)`; inwersja n = obrót listy nut w lewo o n. Metody: `GetChord` (triady dur/mol), `GetSeventhChord` (maj7 `0,4,7,11`; m7 `0,3,7,10`; dominant `0,4,7,10`), `GetExtendedChord` (dim, aug, sus4). Wszystkie zwracają `ChordNote` (Name + Notes). Nazwa ma sufiks `(inversion n)` tylko gdy n > 0.
   - `ChordEnums`: `ChordTonal`, `ChordSeventhTonal`, `ChordInversion`, `ChordSeventhInversion`, `ChordExtendedType`.
-  - `FretboardData`: `Notes` (struna -> 25 nut, próg 0-24) generowane ze strojenia E B G D A E; `Count = 24`.
+  - `FretboardData`: `Notes` (struna -> 25 nut, próg 0-24) generowane ze strojenia; kolejność kluczy = kolejność wyświetlania od góry: `E_high, B, G, D, A, E_low` (jak tabulatura). `OpenStringsLowToHigh` = E A D G B E. `Count = 24`.
+  - `ChordShapeFinder` (+ `record ChordShape(BaseFret, Frets, Degrees)`): `Find(chord, max = 4)` i `FindAll(chord)`. Szuka chwytów w pozycji podstawowej: okno 4 progów (`BaseFret` 1..12, struny puste tylko gdy `BaseFret == 1`), bas = prima, >= 4 sąsiednie struny, wszystkie nuty akordu, kotwica na progu `BaseFret`, <= 4 palce (bareta = 1 palec). Wynik per okno: najlepszy wg `strun*10 - palce*3`; `Find` wybiera zachłannie do `max` chwytów z rozstawem >= 3 progi. `Degrees` = numer nuty w akordzie (1 prima, 2 tercja, 3 kwinta, 4 septyma). Tablice `Frets`/`Degrees` są indeksowane od najniższej struny.
   - `ScaleData.cs`: `ScalesDefinition.GetScale(MusicNotes, ScaleType)` generuje skalę dur / moll naturalny z interwałów; `enum ScaleType`.
-- `Fretboard/FretboardBuilder.cs` (namespace `GuitarChordCLI.Fretboard`): buduje `CliTable` z nutami strun (nagłówek 0..24, E_low na górze).
+- `Fretboard/FretboardBuilder.cs` (namespace `GuitarChordCLI.Fretboard`): buduje `CliTable` z nutami strun (nagłówek 0..24, wysokie E na górze).
+- `Fretboard/ChordShapeTableBuilder.cs`: tabelka jednego chwytu `Build(shape, chord, theme)` (kolumny: nazwa struny, kolumna zerowa, 4 progi); numery nut w kolorze `theme.Chord`, `.` = niegrane. Litera struny (kolumna 0) w kolorze `theme.Chord`, gdy pusta struna jest nutą akordu (także gdy struna jest grana na progu lub wyciszona). Kolumna zerowa (znacznik): `x` = wyciszona, numer nuty (kolor `theme.Chord`) = struna grana pusta, `.` = inaczej. `ToBlock` drukuje tabelę do `BufferedOutput` i zwraca `Block` z tytułem.
+- `Rendering/SideBySide.cs`: `BufferedOutput : ICliOutput` (zapamiętuje linie jako `Segment` z kolorami), `Block`, `SideBySide.Compose/Print` (tytuły + bloki obok siebie, dopełnienie do równej szerokości, odstęp 3). Wymaga `CliTable.Print(ICliOutput)` z biblioteki.
 - `Menu/MainMenu.cs`: pętla `ShowMenu(MenuAction)`; delegat `MenuAction(ChordSelection)`, rekord `ChordSelection(Tonal, SeventhTonal, SeventhMode, Root, ShowScale)`. Klawisze: ←/→ root, M quality (dur/mol lub maj7/m7/7), T tryb triada/akord 7, S skala, C motyw kolorów, Esc wyjście. Pod tabelą wypisywana jest legenda kolorów.
 - `Themes/ColorTheme.cs`: motywy kolorów `Dark`, `Light`, `Contrast` (tło, tekst, nagłówek menu, linie, numery progów, nuty gryfu, `Chord`/`Scale` jako `CellColorOptions`); `Apply()` ustawia kolory konsoli, `Next()` przełącza motyw (klawisz C). Motyw przechodzi przez `ChordSelection.Theme` do `FretboardBuilder(theme)` i `Program.cs`. `CliTable` używa `CliConfigureOptions.DefaultBackgroundColor` do całego wydruku (potrzebne dla jasnego tła); po wyjściu `MainMenu` robi `ResetColor` + `Clear`.
-- `ConsoleSetup.cs`: rozmiar okna 155x35, czcionka Consolas 24 (P/Invoke `SetCurrentConsoleFontEx`), UTF-8.
-- `Program.cs`: łączy całość; w callbacku buduje gryf, koloruje skalę (zielony), potem nuty akordu (czerwony, nadpisuje), wypisuje nazwę i gryf.
+- `ConsoleSetup.cs`: rozmiar okna 155x40, czcionka Consolas 24 (P/Invoke `SetCurrentConsoleFontEx`), UTF-8.
+- `Program.cs`: łączy całość; w callbacku buduje gryf, koloruje skalę (zielony), potem nuty akordu (czerwony, nadpisuje), wypisuje nazwę i gryf, a pod nim `PrintChordShapes` (do 4 chwytów obok siebie).
 - `GuitarChordCLI.Tests/`: xUnit (akordy, inwersje, skale, gryf). Uruchomienie: `dotnet test GuitarChordCLI.Tests`.
 
 ## Przepływ
@@ -26,7 +29,8 @@ Konsolowa aplikacja .NET 9 (Windows) rysująca gryf 6-strunowej gitary (24 progi
 
 ## Znane ograniczenia
 - Notacja tylko z krzyżykami (`A#`, nie `Bb`), zgodna z gryfem; ColorCells porównuje stringi nut.
-- Brak oktaw: kolorowana jest każda pozycja z daną nazwą nuty.
+- Brak oktaw: kolorowana jest każda pozycja z daną nazwą nuty. Główny gryf pokazuje WSZYSTKIE nuty akordu, nie chwyt (opisane w README); konkretne chwyty są w tabelkach `Chord shapes`.
+- Chwyty: tylko pozycja podstawowa (bas = prima), bez oceny wygody poza limitem 4 progów / 4 palców; testy wymagają `InternalsVisibleTo` (csproj) dla typów `internal` (`ColorTheme`, `ChordShapeTableBuilder`).
 - Akordy dim/aug/sus i inwersje istnieją w `ChordBuilder`, ale menu ich nie udostępnia (tylko Root); brak half-diminished, akordów 9 itd.
 - Zależność od Windows (P/Invoke `kernel32`); `PublishAot` wymaga uwagi przy `DllImport` i refleksji.
 - `CliTable.Dispose()` jest pusty (tylko dla składni `using`).

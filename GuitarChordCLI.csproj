@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GuitarChordCLI.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CLITextTable\src\CLITextTable\CLITextTable.csproj" />
   </ItemGroup>
 
